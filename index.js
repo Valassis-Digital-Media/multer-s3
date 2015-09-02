@@ -15,6 +15,7 @@ function S3Storage (opts) {
   if (!opts.dirname) throw new Error('dirname is required')
 
   this.options = opts
+  this.defaultS3Params = (opts.defaultS3Params || undefined)
   this.getFilename = (opts.filename || getFilename)
   this.s3fs = new S3FS(opts.bucket, opts)
 }
@@ -23,7 +24,18 @@ S3Storage.prototype._handleFile = function (req, file, cb) {
   var that = this
   that.getFilename(req, file, function (err, filename) {
     var filePath = that.options.dirname + '/' + filename
-    var outStream = that.s3fs.createWriteStream(filePath)
+    var metadata={}
+    for (var prop in req.body){
+      metadata[String(prop)] = String(req.body[prop])
+    }
+    var json={Metadata:metadata, ContentType:file.mimetype}
+    if (that.defaultS3Params!=undefined){
+      for (var p in that.defaultS3Params){
+        json[p] = that.defaultS3Params[p]
+      }
+    }
+    var outStream = that.s3fs.createWriteStream(filePath,json)
+    //var outStream = that.s3fs.createWriteStream(filePath,json,file.mimetype)
 
     file.stream.pipe(outStream)
 
