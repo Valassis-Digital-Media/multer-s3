@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/badunk/multer-s3#readme",
   "dependencies": {
-    "s3fs": "^2.0.1"
+    "s3fs": "https://github.com/Valassis-Digital-Media/s3fs/tarball/20a7ef1d8f1a74a1419e7ca9ddc321a1b13b2444"
   },
   "devDependencies": {
     "aws-sdk": "^2.1.39",
