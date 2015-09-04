@@ -24,18 +24,18 @@ S3Storage.prototype._handleFile = function (req, file, cb) {
   var that = this
   that.getFilename(req, file, function (err, filename) {
     var filePath = that.options.dirname + '/' + filename
-    var metadata={}
-    for (var prop in req.body){
-      metadata[String(prop)] = String(req.body[prop])
-    }
-    var json={Metadata:metadata, ContentType:file.mimetype}
+    var json={ContentType:file.mimetype}
     if (that.defaultS3Params!=undefined){
       for (var p in that.defaultS3Params){
         json[p] = that.defaultS3Params[p]
       }
     }
+    var metadata={}
+    for (var prop in req.body){
+      metadata[String(prop)] = String(req.body[prop])
+    }
+    json['Metadata']=metadata
     var outStream = that.s3fs.createWriteStream(filePath,json)
-    //var outStream = that.s3fs.createWriteStream(filePath,json,file.mimetype)
 
     file.stream.pipe(outStream)
 
